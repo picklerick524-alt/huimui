@@ -1,0 +1,57 @@
+import streamlit as st
+
+st.title("Моята библиотека")
+
+# Инициализация на списъка с книги в сесията
+if "books" not in st.session_state:
+    st.session_state.books = ["Хари Потър", "Малкият принц", "Хобит", "1984", "Под игото"]
+
+# Показване на всички книги
+st.subheader("📖 Всички книги")
+for book in st.session_state.books:
+    st.write(book)
+
+# Добавяне на нова книга
+st.subheader("Добавяне на книга")
+new_book = st.text_input("Въведете заглавие на книга")
+if st.button("Добави книга"):
+    if new_book.strip() != "":
+        st.session_state.books.append(new_book.strip())
+        st.success("Книгата е добавена!")
+        st.experimental_rerun()
+    else:
+        st.warning("Моля, въведете заглавие!")
+
+# Търсене на книга
+st.subheader("Търсене на книга")
+search = st.text_input("Каква книга търсите?", key="search_input")
+if st.button("Търси"):
+    found = False
+    for book in st.session_state.books:
+        if search.lower() in book.lower():
+            st.success("Намерена книга: " + book)
+            found = True
+    if not found:
+        st.warning("Няма такава книга!")
+
+# Изтриване на книга
+st.subheader("Изтриване на книга")
+if len(st.session_state.books) > 0:
+    selected_book = st.selectbox("Изберете книга:", st.session_state.books)
+    if st.button("Изтрий"):
+        st.session_state.books.remove(selected_book)
+        st.success("Книгата е изтрита!")
+        st.experimental_rerun()
+else:
+    st.info("Библиотеката е празна!")
+
+# Сортиране на книгите
+st.subheader("Сортиране")
+if st.button("Сортирай по азбучен ред"):
+    st.session_state.books.sort()
+    st.experimental_rerun()
+
+# Показване на броя на книгите
+st.subheader("Статистика")
+total = len(st.session_state.books)
+st.metric("Общ брой книги", total)
